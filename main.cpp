@@ -13,7 +13,9 @@ int main ()
 
     node_t* node5 = NewOp(ADD, node3, node4);
 
-    DumpInfix(node5, out);
+    FILE* dot = fopen("dump.dot", "w");   
+
+    GraphDump(node5, "dump.dot");
 
     fclose(out);
 }

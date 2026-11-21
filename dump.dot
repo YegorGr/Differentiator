@@ -1,0 +1,13 @@
+digraph Tree {
+    rankdir=TB;
+    node [fontname="Arial"];
+    node_01031470 [shape=Mrecord, style=filled, fillcolor="#FFB3BA", label="OP | +"];
+    node_010319C8 [shape=Mrecord, style=filled, fillcolor="#FFB3BA", label="OP | /"];
+    node_01031988 [shape=Mrecord, style=filled, fillcolor="#BAFFC9", label="NUM | 7"];
+    node_010319C8 -> node_01031988 [label="L"];
+    node_010319A8 [shape=Mrecord, style=filled, fillcolor="#BAFFC9", label="NUM | 3"];
+    node_010319C8 -> node_010319A8 [label="R"];
+    node_01031470 -> node_010319C8 [label="L"];
+    node_010319E8 [shape=Mrecord, style=filled, fillcolor="#BAFFC9", label="NUM | 5"];
+    node_01031470 -> node_010319E8 [label="R"];
+}
