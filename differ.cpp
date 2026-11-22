@@ -316,14 +316,30 @@ bool IsEqual (double a, double b)
     return fabs(a - b) < EPSILON;
 }
 
-node_t* ReplaceNodeNum (node_t* node, double val)
+node_t* ReplaceNum (node_t* node, double val, bool* status)
 {
     DestroyNode(node);
+
+    *status = true;
 
     return _NUM(val);
 }
 
-node_t* SimplifyConst (node_t* node)
+node_t* ReplaceChild (node_t* node, node_t* delete_node, node_t* connect_node, bool* status)
+{
+    DestroyNode(delete_node);
+    free(node);
+    *status = true;
+
+    return connect_node;
+}
+
+bool IsNum (const node_t* node, double val)
+{
+    return node != nullptr && node->type == NUM && IsEqual(node->value.num, val);
+}
+
+node_t* SimplifyConst (node_t* node, bool* status)
 {
     if (node == nullptr || node->type != OP) return node;
 
@@ -347,9 +363,34 @@ node_t* SimplifyConst (node_t* node)
                 return node;
             result = first_num / second_num;
             break;
-        default:
+        
+            default:
             return node;
     }
 
-    return ReplaceNodeNum(node, result);
+    return ReplaceNum(node, result, status);
+}
+
+node_t* SimplifyBase (node_t* node, bool* status)
+{
+    switch (node->value.op)
+    {
+    case ADD:
+        if (IsNum(node->left,  0.0)) return ReplaceChild(node, node->left, node->right, status);
+        if (IsNum(node->right, 0.0)) return ReplaceChild(node, node->right, node->left, status);
+        break;
+
+    case SUB:
+        if (IsNum(node->right, 0.0)) return ReplaceChild(node, node->right, node->left, status);
+        break;
+    
+    case MULL:
+        if (IsNum(node->left,  0.0) || IsNum(node->right, 0.0)) return ReplaceNum(node, 0.0, status);
+
+    case DIV:
+        if (IsNum(node->left,  0.0)) return ReplaceNum(node, 0.0, status);
+ 
+    default:
+        break;
+    }
 }

@@ -84,7 +84,9 @@ node_t* DiffOp  (const node_t* node, char diff_var);
 
 const char* OpToStr (cmd_n oper);
 
-bool    IsEqual (double a, double b);
-node_t* ReplaceNodeNum (node_t* node, double val);
-node_t* SimplifyConst (node_t* node);
+bool    IsNum          (const node_t* node, double val);
+bool    IsEqual        (double a, double b);
+node_t* ReplaceNum     (node_t* node, double val, bool* status);
+node_t* ReplaceChild   (node_t* node, node_t* delete_node, node_t* connect_node, bool* status);
+node_t* SimplifyConst  (node_t* node, bool* status);
 
