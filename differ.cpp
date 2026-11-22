@@ -44,6 +44,20 @@ node_t* NewOp (cmd_n op, node_t* left, node_t* right)
     return NewNode(OP, value, left, right);
 }
 
+void DumpToFile (const node_t* node, const char* filename)
+{
+    FILE* out = fopen(filename, "w");
+    if (out == nullptr)
+    {
+        fprintf(stderr, "Cannot open file %s for Infix FIle Dump\n", filename);
+        return;
+    }
+
+    DumpInfix(node, out);
+
+    fclose(out);
+}
+
 void DumpInfix (const node_t* node, FILE* out)
 {
     if (node == nullptr)
@@ -166,13 +180,13 @@ void DumpNodeDot (const node_t* node, FILE* dot)
     if (node->left != nullptr)
     {
         DumpNodeDot(node->left, dot);
-        fprintf(dot, "    node_%p -> node_%p [label=\"L\"];\n", node, node->left);
+        fprintf(dot, "    node_%p -> node_%p \n", node, node->left);
     }
 
     if (node->right != nullptr)
     {
         DumpNodeDot(node->right, dot);
-        fprintf(dot, "    node_%p -> node_%p [label=\"R\"];\n", node, node->right);
+        fprintf(dot, "    node_%p -> node_%p \n", node, node->right);
     }
 }
 
@@ -195,6 +209,81 @@ void GraphDump (const node_t* root, const char* filename)
 
     fprintf(dot, "}\n");
     fclose(dot);
+
+    char cmd[MAX_BUFFER] = {};
+    snprintf(cmd, sizeof(cmd), "dot -Tpng %s -o dump.png", filename);
+
+    system(cmd);
 }
 
+#define _DL Diff(node->left,  diff_var)
+#define _DR Diff(node->right, diff_var)
+#define _CL CopyNode(node->left)
+#define _CR CopyNode(node->right)
+
+node_t* Diff (const node_t* node, char diff_var)
+{
+    if (node == nullptr)
+        return nullptr;
+
+    switch(node->type)
+    {
+        case NUM: return _NUM(0);
+        case VAR: return _NUM(node->value.var == diff_var ? 1 : 0);
+        case OP:  return DiffOp(node, diff_var);
+
+        default:
+            fprintf(stderr, "Error: unknown node type in Diff!\n");
+            return nullptr;
+    }
+}
+
+node_t* DiffAdd (const node_t* node, char diff_var)
+{
+    return _ADD(_DL, _DR);
+}
+
+node_t* DiffSub (const node_t* node, char diff_var)
+{
+    return _SUB(_DL, _DR);
+}
+
+node_t* DiffMul (const node_t* node, char diff_var)
+{
+    node_t* left_part  = _MULL(_DL, _CR);
+    node_t* right_part = _MULL(_CL, _DR);
+
+    return _ADD(left_part, right_part);
+}
+
+node_t* DiffDiv (const node_t* node, char diff_var)
+{
+    node_t* left_part_up  = _MULL(_DL, _CR);
+    node_t* right_part_up = _MULL(_CL, _DR); 
+    
+    node_t* numerator   = _SUB(left_part_up, right_part_up);
+    node_t* denominator = _MULL(_CR, _CR);
+
+    return _DIV(numerator, denominator);
+}
+
+node_t* DiffOp (const node_t* node, char diff_var)
+{
+    switch (node->value.op)
+    {
+        case ADD:  return DiffAdd(node, diff_var);
+        case SUB:  return DiffSub(node, diff_var);
+        case MULL: return DiffMul(node, diff_var);
+        case DIV:  return DiffDiv(node, diff_var);
+    
+        default:
+            fprintf(stderr, "Unknown command");
+            return nullptr;
+    }
+}
+
+#undef _DL
+#undef _DR
+#undef _CL
+#undef _CR
 

@@ -14,7 +14,8 @@
 #define _MULL(a, b) NewOp(MULL, (a), (b))
 #define _DIV(a, b)  NewOp(DIV,  (a), (b))
 
-const int MAX_VARS = 8;
+const int MAX_VARS   = 8;
+const int MAX_BUFFER = 256;
 
 struct value_name
 {
@@ -66,12 +67,19 @@ node_t* NewNum (double num);
 node_t* NewVar (char var);
 node_t* NewOp  (cmd_n op, node_t* left, node_t* right);
 
+void DumpToFile  (const node_t* node, const char* filename);
 void DumpInfix   (const node_t* node, FILE* out);
 void PrintOp     (const node_t* node, FILE* out);
 
 void GraphDump   (const node_t* root, const char* filename);
 void DumpNodeDot (const node_t* node, FILE* dot);
 
+node_t* Diff    (const node_t* node, char diff_var);
+node_t* DiffAdd (const node_t* node, char diff_var);
+node_t* DiffSub (const node_t* node, char diff_var);
+node_t* DiffMul (const node_t* node, char diff_var);
+node_t* DiffDiv (const node_t* node, char diff_var);
+node_t* DiffOp  (const node_t* node, char diff_var);
 
 const char* OpToStr (cmd_n oper);
 
