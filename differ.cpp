@@ -311,3 +311,45 @@ node_t* DiffOp (const node_t* node, char diff_var)
 #undef _CL
 #undef _CR
 
+bool IsEqual (double a, double b)
+{
+    return fabs(a - b) < EPSILON;
+}
+
+node_t* ReplaceNodeNum (node_t* node, double val)
+{
+    DestroyNode(node);
+
+    return _NUM(val);
+}
+
+node_t* SimplifyConst (node_t* node)
+{
+    if (node == nullptr || node->type != OP) return node;
+
+    node->left  = SimplifyConst(node->left);
+    node->right = SimplifyConst(node->right);
+
+    if (node->left->type != NUM || node->right->type != NUM) return node;
+
+
+    double first_num  = node->left->value.num;
+    double second_num = node->right->value.num;
+    double result     = 0.0;
+
+    switch(node->value.op)
+    {
+        case ADD:  result = first_num + second_num; break;
+        case SUB:  result = first_num - second_num; break;
+        case MULL: result = first_num * second_num; break;
+        case DIV:
+            if (IsEqual(second_num, 0.0))
+                return node;
+            result = first_num / second_num;
+            break;
+        default:
+            return node;
+    }
+
+    return ReplaceNodeNum(node, result);
+}

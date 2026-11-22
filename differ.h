@@ -16,6 +16,7 @@
 
 const int MAX_VARS   = 8;
 const int MAX_BUFFER = 256;
+const double EPSILON = 1e-7;
 
 struct value_name
 {
@@ -83,6 +84,7 @@ node_t* DiffOp  (const node_t* node, char diff_var);
 
 const char* OpToStr (cmd_n oper);
 
+bool    IsEqual (double a, double b);
+node_t* ReplaceNodeNum (node_t* node, double val);
+node_t* SimplifyConst (node_t* node);
 
-
-// node_t* DiffFunc (const node_t* node);
