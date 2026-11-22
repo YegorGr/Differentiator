@@ -71,7 +71,7 @@ void DumpToFile  (const node_t* node, const char* filename);
 void DumpInfix   (const node_t* node, FILE* out);
 void PrintOp     (const node_t* node, FILE* out);
 
-void GraphDump   (const node_t* root, const char* filename);
+void GraphDump (const node_t* root, const char* name_dot, const char* name_png);
 void DumpNodeDot (const node_t* node, FILE* dot);
 
 node_t* Diff    (const node_t* node, char diff_var);

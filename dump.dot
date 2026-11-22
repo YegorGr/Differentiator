@@ -1,13 +1,20 @@
 digraph Tree {
     rankdir=TB;
+    nodesep=0.5;
+    ranksep=0.8;
+    splines=curved;
     node [fontname="Arial"];
-    node_00F31470 [shape=Mrecord, style=filled, fillcolor="#FFB3BA", label="OP | +"];
-    node_00F319C8 [shape=Mrecord, style=filled, fillcolor="#FFB3BA", label="OP | /"];
-    node_00F31988 [shape=Mrecord, style=filled, fillcolor="#BAFFC9", label="NUM | 7"];
-    node_00F319C8 -> node_00F31988 
-    node_00F319A8 [shape=Mrecord, style=filled, fillcolor="#BAFFC9", label="NUM | 3"];
-    node_00F319C8 -> node_00F319A8 
-    node_00F31470 -> node_00F319C8 
-    node_00F319E8 [shape=Mrecord, style=filled, fillcolor="#BAFFC9", label="NUM | 5"];
-    node_00F31470 -> node_00F319E8 
+    node_008B1470 [shape=Mrecord, style=filled, fillcolor="#FFB3BA", label="{ { OP | + } | Ptr: 008B1470 | { <left> Ptr(L): 008B1988 | <right> Ptr(R): 008B19E8 } }"];
+    node_008B1988 [shape=Mrecord, style=filled, fillcolor="#FFB3BA", label="{ { OP | / } | Ptr: 008B1988 | { <left> Ptr(L): 008B1910 | <right> Ptr(R): 008B1930 } }"];
+    node_008B1910 [shape=Mrecord, style=filled, fillcolor="#BAFFC9", label="{ { NUM | 7 } | Ptr: 008B1910 | { <left> Ptr(L): 00000000 | <right> Ptr(R): 00000000 } }"];
+    node_008B1988:left -> node_008B1910 
+    node_008B1930 [shape=Mrecord, style=filled, fillcolor="#BAFFC9", label="{ { NUM | 3 } | Ptr: 008B1930 | { <left> Ptr(L): 00000000 | <right> Ptr(R): 00000000 } }"];
+    node_008B1988:right -> node_008B1930 
+    node_008B1470:left -> node_008B1988 
+    node_008B19E8 [shape=Mrecord, style=filled, fillcolor="#FFB3BA", label="{ { OP | + } | Ptr: 008B19E8 | { <left> Ptr(L): 008B19A8 | <right> Ptr(R): 008B19C8 } }"];
+    node_008B19A8 [shape=Mrecord, style=filled, fillcolor="#BAE1FF", label="{ { VAR | x } | Ptr: 008B19A8 | { <left> Ptr(L): 00000000 | <right> Ptr(R): 00000000 } }"];
+    node_008B19E8:left -> node_008B19A8 
+    node_008B19C8 [shape=Mrecord, style=filled, fillcolor="#BAFFC9", label="{ { NUM | 6 } | Ptr: 008B19C8 | { <left> Ptr(L): 00000000 | <right> Ptr(R): 00000000 } }"];
+    node_008B19E8:right -> node_008B19C8 
+    node_008B1470:right -> node_008B19E8 
 }

@@ -2,20 +2,21 @@
 
 int main ()
 {
-    FILE* out = fopen("out.txt", "w");
-
     node_t* node1 = NewNum(7);
     node_t* node2 = NewNum(3);
 
     node_t* node3 = NewOp(DIV, node1, node2);
 
-    node_t* node4 = NewNum(5);
+    node_t* node6 = _VAR('x');
+    node_t* node7 = _NUM(6);
 
-    node_t* node5 = NewOp(ADD, node3, node4);
+    node_t* node8 = _ADD(node6, node7);
 
-    GraphDump(node5, "dump.dot");
+    node_t* node5 = NewOp(ADD, node3, node8);
+
+    GraphDump(node5, "dump.dot", "dump.png");
 
     DumpToFile(node5, "out.txt");
 
-    fclose(out);
+    DestroyNode(node5);
 }

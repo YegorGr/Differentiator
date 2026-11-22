@@ -149,6 +149,18 @@ node_t* CopyNode (const node_t* node)
                    CopyNode(node->right));
 }
 
+#ifdef DEBUG_DUMP
+    #define PRINT_NODE(dot, node, color, type_str, val_fmt, val)                                \
+        fprintf((dot), "    node_%p [shape=Mrecord, style=filled, fillcolor=\"%s\", "           \
+                       "label=\"{ { %s | " val_fmt " } | Ptr: %p | "                            \
+                       "{ <left> Ptr(L): %p | <right> Ptr(R): %p } }\"];\n",                    \
+                       (node), (color), (type_str), (val), (node), (node->left), (node->right)) 
+#else
+    #define PRINT_NODE(dot, node, color, type_str, val_fmt, val)                                \
+        fprintf((dot), "    node_%p [shape=Mrecord, style=filled, fillcolor=\"%s\", "           \
+                       "label=\"{ %s | " val_fmt " }\"];\n", (node), (color), (type_str), (val))
+#endif
+
 void DumpNodeDot (const node_t* node, FILE* dot)
 {
     if (node == nullptr)
@@ -157,18 +169,15 @@ void DumpNodeDot (const node_t* node, FILE* dot)
     switch (node->type)
     {
         case OP:
-            fprintf(dot, "    node_%p [shape=Mrecord, style=filled, fillcolor=\"#FFB3BA\", "
-                         "label=\"OP | %s\"];\n", node, OpToStr(node->value.op));
+            PRINT_NODE(dot, node, "#FFB3BA", "OP",  "%s", OpToStr(node->value.op));
             break;
 
         case NUM:
-            fprintf(dot, "    node_%p [shape=Mrecord, style=filled, fillcolor=\"#BAFFC9\", "
-                         "label=\"NUM | %g\"];\n", node, node->value.num);
+            PRINT_NODE(dot, node, "#BAFFC9", "NUM", "%g", node->value.num);
             break;
 
         case VAR:
-            fprintf(dot, "    node_%p [shape=Mrecord, style=filled, fillcolor=\"#BAE1FF\", "
-                         "label=\"VAR | %c\"];\n", node, node->value.var);
+            PRINT_NODE(dot, node, "#BAE1FF", "VAR", "%c", node->value.var);
             break;
 
         default:
@@ -180,29 +189,44 @@ void DumpNodeDot (const node_t* node, FILE* dot)
     if (node->left != nullptr)
     {
         DumpNodeDot(node->left, dot);
-        fprintf(dot, "    node_%p -> node_%p \n", node, node->left);
+
+        #ifdef DEBUG_DUMP
+            fprintf(dot, "    node_%p:left -> node_%p \n", node, node->left);
+        #else
+            fprintf(dot, "    node_%p -> node_%p \n", node, node->left);
+        #endif
     }
 
     if (node->right != nullptr)
     {
         DumpNodeDot(node->right, dot);
-        fprintf(dot, "    node_%p -> node_%p \n", node, node->right);
+
+        #ifdef DEBUG_DUMP
+            fprintf(dot, "    node_%p:right -> node_%p \n", node, node->right);
+        #else
+            fprintf(dot, "    node_%p -> node_%p \n", node, node->right);
+        #endif
     }
 }
 
-void GraphDump (const node_t* root, const char* filename)
+void GraphDump (const node_t* root, const char* name_dot, const char* name_png)
 {
-    assert(filename);
+    assert(name_dot);
+    assert(name_png);
 
-    FILE* dot = fopen(filename, "w");
+    FILE* dot = fopen(name_dot, "w");
     if (dot == nullptr)
     {
-        fprintf(stderr, "Cannot open file %s for GraphDump\n", filename);
+        fprintf(stderr, "Cannot open file %s for GraphDump\n", name_dot);
         return;
     }
 
     fprintf(dot, "digraph Tree {\n");
+
     fprintf(dot, "    rankdir=TB;\n");
+    fprintf(dot, "    nodesep=0.5;\n");
+    fprintf(dot, "    ranksep=0.8;\n");
+    fprintf(dot, "    splines=curved;\n");
     fprintf(dot, "    node [fontname=\"Arial\"];\n");
 
     DumpNodeDot(root, dot);
@@ -211,7 +235,7 @@ void GraphDump (const node_t* root, const char* filename)
     fclose(dot);
 
     char cmd[MAX_BUFFER] = {};
-    snprintf(cmd, sizeof(cmd), "dot -Tpng %s -o dump.png", filename);
+    snprintf(cmd, sizeof(cmd), "dot -Tpng %s -o %s", name_dot, name_png);
 
     system(cmd);
 }
