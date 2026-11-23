@@ -421,19 +421,67 @@ node_t* SimplifyBase (node_t* node, bool* status)
     return node;
 }
 
-void SkipSpaces (parser_t* pars)
+void SkipSpaces (char** string)
 {
-    int i = pars->pos;
-
-    while (isspace(pars->str[i]))
-        pars->pos++;
+    while (isspace(**string))
+        (*string)++;
 }
 
-// node_t* InfixReadFile (FILE* in)
-// {
-//     SkipSpaces(in);
+node_t* OperInfix (char oper, node_t* left, node_t* right)
+{
+    switch (oper)
+        {
+            case '+': return _ADD(left, right);
+            case '-': return _SUB(left, right);
+            case '*': return _MULL(left, right);
+            case '/': return _DIV(left, right);
+        
+            default:
+                fprintf(stderr, "Unknown operator: %c", oper);
+                return nullptr;
+        }
+}
 
-//     int ch = 0;
-//     if ((ch = fgetc(in)) == EOF) return nullptr;
+node_t* DigitInfix (char* string)
+{
+    double val = NAN;
+    memcpy(&val, string, sizeof(double));
 
-// }
+    return _NUM(val);
+}
+
+node_t* AlphaInfix (char* string)
+{
+    char var = *string;
+
+    return _VAR(var);
+}
+
+node_t* InfixRead (char* string)
+{
+    SkipSpaces(&string);
+
+    if (*string == '(')
+    {
+        string++;
+
+        node_t* left = InfixRead(string);
+        SkipSpaces(&string);
+
+        char oper = *string;
+        string++;
+
+        node_t* right = InfixRead(string);
+        SkipSpaces(&string);
+
+        if (*string == ')') string++;
+
+        return OperInfix(oper, left, right);
+    }
+
+    if (isdigit(*string)) return DigitInfix(string);
+
+    if (isalpha(*string)) return AlphaInfix(string);
+
+    return nullptr;
+}
