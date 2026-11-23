@@ -115,21 +115,6 @@ const char* OpToStr (cmd_n oper)
     }
 }
 
-
-// node_t* DiffFunc (const node_t* node)
-// {
-//     switch (node->type)
-//     {
-//     case NUM:
-//         return NewNode (NUM, 0, NULL, NULL);
-//         break;
-//     case VAR:
-//         return NewNode ();
-//     default:
-//         break;
-//     }
-// }
-
 void DestroyNode (node_t* node)
 {
     if (node == nullptr)
@@ -486,4 +471,87 @@ node_t* InfixRead (char** string)
     if (isalpha(**string)) return AlphaInfix(string);
 
     return nullptr;
+}
+
+void SetVar (var_array_t* array, char name, double value)
+{
+    assert(array);
+
+    for (int i = 0; i < MAX_VARS; i++)
+    {
+        if (array->items[i].name == name)
+        {
+            array->items[i].value = value;
+            return;
+        }
+    }
+
+    if (array->count < MAX_VARS)
+    {
+        array->items[array->count].value = value;
+        array->items[array->count].name  = name;
+        array->count++;
+    }
+    else
+        fprintf(stderr, "Error push %c to array, becouse overflow array! Max: %d", 
+                name, MAX_VARS);
+}
+
+double GetVar (var_array_t* array, char name)
+{
+    assert(array);
+
+    for (int i = 0; i < MAX_VARS; i++)
+    {
+        if (array->items[i].name == name)
+        {
+            return array->items[i].value;
+        }
+    }
+
+    fprintf(stderr, "No such variable in array: '%c'", name);
+    return NAN; 
+}
+
+double SolveTree (node_t* node, var_array_t* array)
+{
+    assert(node);
+    assert(array);
+
+    switch (node->type)
+    {
+    case NUM: return node->value.num;
+    case VAR: return GetVar(array, node->value.var);
+    case OP:  return SolverOp(node, array);
+    
+    default:
+        fprintf(stderr, "Error: unknown node type in SolveTree!\n");
+        return NAN;
+    }
+}
+
+double SolverOp (node_t* node, var_array_t* array)
+{
+    double left  = SolveTree(node->left, array);
+    double right = SolveTree(node->right, array);
+    
+    switch (node->value.op)
+    {
+        case ADD:  return left + right;
+        case SUB:  return left - right;
+        case MULL: return left * right;
+        case DIV:
+        {
+            if (IsEqual(right, 0.0)) 
+            {
+                fprintf(stderr, "Incorrect div to null");
+                return NAN;
+            }
+            return left / right;
+        }
+    
+    default:
+        fprintf(stderr, "Incorrect operator in SolverOp!");
+        return NAN;
+    }
 }

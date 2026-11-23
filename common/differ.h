@@ -105,3 +105,9 @@ node_t* OperInfix  (char oper, node_t* left, node_t* right);
 node_t* DigitInfix (char** string);
 node_t* AlphaInfix (char** string);
 node_t* InfixRead  (char** string);
+
+void    SetVar     (var_array_t* array, char name, double value);
+double  GetVar     (var_array_t* array, char name);
+
+double  SolverOp   (node_t* node, var_array_t* array);
+double  SolveTree  (node_t* node, var_array_t* array);
