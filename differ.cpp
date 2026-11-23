@@ -339,12 +339,26 @@ bool IsNum (const node_t* node, double val)
     return node != nullptr && node->type == NUM && IsEqual(node->value.num, val);
 }
 
+node_t* Simplify (node_t* node)
+{
+    bool status = true;
+    while (status)
+    {
+        status = false;
+
+        node = SimplifyConst(node, &status);
+        node = SimplifyBase (node, &status);
+    }
+
+    return node;
+}
+
 node_t* SimplifyConst (node_t* node, bool* status)
 {
     if (node == nullptr || node->type != OP) return node;
 
-    node->left  = SimplifyConst(node->left);
-    node->right = SimplifyConst(node->right);
+    node->left  = SimplifyConst(node->left,  status);
+    node->right = SimplifyConst(node->right, status);
 
     if (node->left->type != NUM || node->right->type != NUM) return node;
 
@@ -373,6 +387,11 @@ node_t* SimplifyConst (node_t* node, bool* status)
 
 node_t* SimplifyBase (node_t* node, bool* status)
 {
+    if (node == nullptr || node->type != OP) return node;
+
+    node->left  = SimplifyBase(node->left,  status);
+    node->right = SimplifyBase(node->right, status);
+
     switch (node->value.op)
     {
     case ADD:
@@ -386,11 +405,35 @@ node_t* SimplifyBase (node_t* node, bool* status)
     
     case MULL:
         if (IsNum(node->left,  0.0) || IsNum(node->right, 0.0)) return ReplaceNum(node, 0.0, status);
+        if (IsNum(node->left, 1.0))  return ReplaceChild(node, node->left, node->right, status);
+        if (IsNum(node->right, 1.0)) return ReplaceChild(node, node->right, node->left, status);
+        break;
 
     case DIV:
         if (IsNum(node->left,  0.0)) return ReplaceNum(node, 0.0, status);
+        if (IsNum(node->right, 1.0)) return ReplaceChild(node, node->right, node->left, status);
+        break;
  
     default:
         break;
     }
+
+    return node;
 }
+
+void SkipSpaces (parser_t* pars)
+{
+    int i = pars->pos;
+
+    while (isspace(pars->str[i]))
+        pars->pos++;
+}
+
+// node_t* InfixReadFile (FILE* in)
+// {
+//     SkipSpaces(in);
+
+//     int ch = 0;
+//     if ((ch = fgetc(in)) == EOF) return nullptr;
+
+// }

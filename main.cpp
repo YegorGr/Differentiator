@@ -15,7 +15,8 @@ int main ()
     node_t* node5 = NewOp(ADD, node3, node8);
 
     node5 = Diff(node5, 'x');
-    node5 = SimplifyConst(node5);
+    
+    node5 = Simplify(node5);
 
     GraphDump(node5, "dump.dot", "dump.png");
 

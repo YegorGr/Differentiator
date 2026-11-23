@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <math.h>
 #include <string.h>
+#include <ctype.h>
 
 #define _VAR(x) NewVar(x)
 #define _NUM(n) NewNum(n)
@@ -60,6 +61,12 @@ struct node_t
     node_t* right;
 };
 
+struct parser_t
+{
+    const char* str;
+    size_t      pos;
+};
+
 node_t* NewNode     (type_n type, val_t value, node_t* left_node, node_t* right_node);
 void    DestroyNode (node_t* node);
 node_t* CopyNode    (const node_t* node);
@@ -82,11 +89,18 @@ node_t* DiffMul (const node_t* node, char diff_var);
 node_t* DiffDiv (const node_t* node, char diff_var);
 node_t* DiffOp  (const node_t* node, char diff_var);
 
-const char* OpToStr (cmd_n oper);
+const char* OpToStr    (cmd_n oper);
 
 bool    IsNum          (const node_t* node, double val);
 bool    IsEqual        (double a, double b);
 node_t* ReplaceNum     (node_t* node, double val, bool* status);
 node_t* ReplaceChild   (node_t* node, node_t* delete_node, node_t* connect_node, bool* status);
+
+node_t* Simplify       (node_t* node);
 node_t* SimplifyConst  (node_t* node, bool* status);
+node_t* SimplifyBase   (node_t* node, bool* status);
+
+void    SkipSpaces     (parser_t* pars);
+
+
 
