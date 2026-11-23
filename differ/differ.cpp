@@ -442,46 +442,48 @@ node_t* OperInfix (char oper, node_t* left, node_t* right)
         }
 }
 
-node_t* DigitInfix (char* string)
+node_t* DigitInfix (char** string)
 {
-    double val = NAN;
-    memcpy(&val, string, sizeof(double));
+    char* end = nullptr;
+    double val = strtod(*string, &end);
+    *string = end;
 
     return _NUM(val);
 }
 
-node_t* AlphaInfix (char* string)
+node_t* AlphaInfix (char** string)
 {
-    char var = *string;
+    char var = **string;
+    (*string)++;
 
     return _VAR(var);
 }
 
-node_t* InfixRead (char* string)
+node_t* InfixRead (char** string)
 {
-    SkipSpaces(&string);
+    SkipSpaces(string);
 
-    if (*string == '(')
+    if (**string == '(')
     {
-        string++;
+        (*string)++;
 
         node_t* left = InfixRead(string);
-        SkipSpaces(&string);
+        SkipSpaces(string);
 
-        char oper = *string;
-        string++;
+        char oper = **string;
+        (*string)++;
 
         node_t* right = InfixRead(string);
-        SkipSpaces(&string);
+        SkipSpaces(string);
 
-        if (*string == ')') string++;
+        if (**string == ')') (*string)++;
 
         return OperInfix(oper, left, right);
     }
 
-    if (isdigit(*string)) return DigitInfix(string);
+    if (isdigit(**string)) return DigitInfix(string);
 
-    if (isalpha(*string)) return AlphaInfix(string);
+    if (isalpha(**string)) return AlphaInfix(string);
 
     return nullptr;
 }

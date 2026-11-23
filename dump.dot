@@ -4,5 +4,41 @@ digraph Tree {
     ranksep=0.8;
     splines=curved;
     node [fontname="Arial"];
-    node_009114B8 [shape=Mrecord, style=filled, fillcolor="#BAFFC9", label="{ { NUM | 1 } | Ptr: 009114B8 | { <left> Ptr(L): 00000000 | <right> Ptr(R): 00000000 } }"];
+    node_00956038 [shape=Mrecord, style=filled, fillcolor="#FFB3BA", label="{ { OP | / } | Ptr: 00956038 | { <left> Ptr(L): 00955FF8 | <right> Ptr(R): 00956018 } }"];
+    node_00955FF8 [shape=Mrecord, style=filled, fillcolor="#FFB3BA", label="{ { OP | - } | Ptr: 00955FF8 | { <left> Ptr(L): 009560B8 | <right> Ptr(R): 00955E18 } }"];
+    node_009560B8 [shape=Mrecord, style=filled, fillcolor="#BAFFC9", label="{ { NUM | 0 } | Ptr: 009560B8 | { <left> Ptr(L): 00000000 | <right> Ptr(R): 00000000 } }"];
+    node_00955FF8:left -> node_009560B8 
+    node_00955E18 [shape=Mrecord, style=filled, fillcolor="#FFB3BA", label="{ { OP | * } | Ptr: 00955E18 | { <left> Ptr(L): 00956118 | <right> Ptr(R): 00955D78 } }"];
+    node_00956118 [shape=Mrecord, style=filled, fillcolor="#BAFFC9", label="{ { NUM | 15 } | Ptr: 00956118 | { <left> Ptr(L): 00000000 | <right> Ptr(R): 00000000 } }"];
+    node_00955E18:left -> node_00956118 
+    node_00955D78 [shape=Mrecord, style=filled, fillcolor="#FFB3BA", label="{ { OP | + } | Ptr: 00955D78 | { <left> Ptr(L): 00955DB8 | <right> Ptr(R): 009560D8 } }"];
+    node_00955DB8 [shape=Mrecord, style=filled, fillcolor="#BAE1FF", label="{ { VAR | x } | Ptr: 00955DB8 | { <left> Ptr(L): 00000000 | <right> Ptr(R): 00000000 } }"];
+    node_00955D78:left -> node_00955DB8 
+    node_009560D8 [shape=Mrecord, style=filled, fillcolor="#BAE1FF", label="{ { VAR | x } | Ptr: 009560D8 | { <left> Ptr(L): 00000000 | <right> Ptr(R): 00000000 } }"];
+    node_00955D78:right -> node_009560D8 
+    node_00955E18:right -> node_00955D78 
+    node_00955FF8:right -> node_00955E18 
+    node_00956038:left -> node_00955FF8 
+    node_00956018 [shape=Mrecord, style=filled, fillcolor="#FFB3BA", label="{ { OP | * } | Ptr: 00956018 | { <left> Ptr(L): 00955FD8 | <right> Ptr(R): 00955F98 } }"];
+    node_00955FD8 [shape=Mrecord, style=filled, fillcolor="#FFB3BA", label="{ { OP | - } | Ptr: 00955FD8 | { <left> Ptr(L): 00955FB8 | <right> Ptr(R): 00955E78 } }"];
+    node_00955FB8 [shape=Mrecord, style=filled, fillcolor="#FFB3BA", label="{ { OP | * } | Ptr: 00955FB8 | { <left> Ptr(L): 00955ED8 | <right> Ptr(R): 00956098 } }"];
+    node_00955ED8 [shape=Mrecord, style=filled, fillcolor="#BAE1FF", label="{ { VAR | x } | Ptr: 00955ED8 | { <left> Ptr(L): 00000000 | <right> Ptr(R): 00000000 } }"];
+    node_00955FB8:left -> node_00955ED8 
+    node_00956098 [shape=Mrecord, style=filled, fillcolor="#BAE1FF", label="{ { VAR | x } | Ptr: 00956098 | { <left> Ptr(L): 00000000 | <right> Ptr(R): 00000000 } }"];
+    node_00955FB8:right -> node_00956098 
+    node_00955FD8:left -> node_00955FB8 
+    node_00955E78 [shape=Mrecord, style=filled, fillcolor="#BAFFC9", label="{ { NUM | 1 } | Ptr: 00955E78 | { <left> Ptr(L): 00000000 | <right> Ptr(R): 00000000 } }"];
+    node_00955FD8:right -> node_00955E78 
+    node_00956018:left -> node_00955FD8 
+    node_00955F98 [shape=Mrecord, style=filled, fillcolor="#FFB3BA", label="{ { OP | - } | Ptr: 00955F98 | { <left> Ptr(L): 00956078 | <right> Ptr(R): 00955EF8 } }"];
+    node_00956078 [shape=Mrecord, style=filled, fillcolor="#FFB3BA", label="{ { OP | * } | Ptr: 00956078 | { <left> Ptr(L): 00955E38 | <right> Ptr(R): 00955F78 } }"];
+    node_00955E38 [shape=Mrecord, style=filled, fillcolor="#BAE1FF", label="{ { VAR | x } | Ptr: 00955E38 | { <left> Ptr(L): 00000000 | <right> Ptr(R): 00000000 } }"];
+    node_00956078:left -> node_00955E38 
+    node_00955F78 [shape=Mrecord, style=filled, fillcolor="#BAE1FF", label="{ { VAR | x } | Ptr: 00955F78 | { <left> Ptr(L): 00000000 | <right> Ptr(R): 00000000 } }"];
+    node_00956078:right -> node_00955F78 
+    node_00955F98:left -> node_00956078 
+    node_00955EF8 [shape=Mrecord, style=filled, fillcolor="#BAFFC9", label="{ { NUM | 1 } | Ptr: 00955EF8 | { <left> Ptr(L): 00000000 | <right> Ptr(R): 00000000 } }"];
+    node_00955F98:right -> node_00955EF8 
+    node_00956018:right -> node_00955F98 
+    node_00956038:right -> node_00956018 
 }
